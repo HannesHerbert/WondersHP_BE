@@ -1,23 +1,28 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../service/db.service.js';
 
-const Media = sequelize.define('Media', {
+const Image = sequelize.define('Media', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  sourceUrl: {
+  sourceUrlSM: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  sourceUrlMD: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  sourceUrlLG: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },
   title: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: false,
-  },
-  type: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: false,
@@ -30,4 +35,4 @@ const Media = sequelize.define('Media', {
   }
 });
 
-export default Media
+export default Image

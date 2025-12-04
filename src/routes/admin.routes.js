@@ -2,7 +2,8 @@ import { Router } from "express";
 import jwt from "jsonwebtoken";
 import { createUser, validateUser } from "../controller/user.controller.js";
 import { createMember, updateMembers } from "../controller/member.controller.js";
-import { uploadFile } from "../service/cloudinary.service.js";
+import { convertMedia, getAllImages } from "../controller/media.controller.js";
+import { upload } from "../service/upload.service.js";
 
 
 
@@ -33,7 +34,7 @@ export function verifyAdminToken(req, res, next) {
 
 const AdminRouter = Router();
 
-AdminRouter.use(verifyAdminToken);
+// AdminRouter.use(verifyAdminToken);
 
 //USER
 AdminRouter.route('/create-user')
@@ -42,7 +43,6 @@ AdminRouter.route('/create-user')
 AdminRouter.route('/update-members')
     .put(updateMembers)
 
-    
 AdminRouter.route('/validate')
     .post(validateUser)
 
@@ -50,7 +50,10 @@ AdminRouter.route('/create-member')
     .post(createMember)
 
 AdminRouter.route('/upload-media')
-    .post(uploadFile)
+    .post(upload.single('file'), convertMedia)
+
+AdminRouter.route('/list-images')
+    .get(getAllImages)
 
 // AdminRouter.route('/user/:id')
 //     .delete(deleteUserById)     // löscht Userprofile

@@ -4,10 +4,7 @@ import LoginRouter from './routes/login.routes.js';
 import PublicRouter from './routes/public.route.js'
 import { connectToDb, sequelize } from './service/db.service.js';
 import cors from 'cors';
-import User from './models/user.model.js';
-import { cloudinaryInit } from './service/cloudinary.service.js';
-
-// import cors from 'cors';
+import User from './models/user.model.js'; 
 import dotenv from 'dotenv';
 
 
@@ -46,14 +43,8 @@ app.use('/public', PublicRouter);
 const start = async () => {
     try {
 
-        // Initialisiert Cloud-Dienst für File-Upload (Cloudinary)
-        cloudinaryInit();
-
-        // Einmalig Verbindung ueber default Connection aufbauen
-        // es kann noch ein Callback mitgeliefert werden
         await connectToDb();
 
-        // Starte Server auf dem in der Config hinterlegten Port
         app.listen(process.env.API_PORT, () => console.log(`Server is listening on http://localhost:${process.env.API_PORT}`));
 
     } catch (error) {
@@ -67,7 +58,7 @@ start();
 
 async function syncDatabase() {
     try {
-      await sequelize.sync({ force: false }); // Dies erstellt die Tabelle und überschreibt sie, wenn sie bereits existiert
+      await sequelize.sync({ force: false });
       console.log('All models were synchronized successfully.');
     } catch (error) {
       console.error('Error synchronizing the models:', error);
