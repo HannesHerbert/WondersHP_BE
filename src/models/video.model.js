@@ -1,23 +1,13 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../service/db.service.js';
 
-const Image = sequelize.define('Image', {
+const Video = sequelize.define('Video', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  sourceUrlSM: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  sourceUrlMD: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  sourceUrlLG: {
+  sourceUrl: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
@@ -40,4 +30,4 @@ const Image = sequelize.define('Image', {
   }
 });
 
-export default Image
+export default Video

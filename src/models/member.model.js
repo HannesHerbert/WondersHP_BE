@@ -26,10 +26,10 @@ const Member = sequelize.define('Member', {
     allowNull: false,
     unique: false,
   },
-  image_path: {
-    type: DataTypes.STRING,
+  image_id: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    unique: false,
+    unique: true,
   },
   image_position: {
     type: DataTypes.INTEGER,

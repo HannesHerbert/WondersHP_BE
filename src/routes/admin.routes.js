@@ -2,7 +2,7 @@ import { Router } from "express";
 import jwt from "jsonwebtoken";
 import { createUser, validateUser } from "../controller/user.controller.js";
 import { createMember, updateMembers } from "../controller/member.controller.js";
-import { convertMedia, getAllImages } from "../controller/media.controller.js";
+import { uploadMedia, getAllImages } from "../controller/media.controller.js";
 import { upload } from "../service/upload.service.js";
 
 
@@ -50,7 +50,7 @@ AdminRouter.route('/create-member')
     .post(createMember)
 
 AdminRouter.route('/upload-media')
-    .post(upload.single('file'), convertMedia)
+    .post(upload.single('file'), uploadMedia)
 
 AdminRouter.route('/list-images')
     .get(getAllImages)

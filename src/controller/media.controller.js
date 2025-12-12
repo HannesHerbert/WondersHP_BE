@@ -4,9 +4,8 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs';
 import Image from '../models/image.model.js';
+import Video from '../models/video.model.js'; // ← NEU: Video-Model importieren
 import { fileURLToPath } from 'url';
-import { legacyNormalizeExpression } from '@cloudinary/url-gen/backwards/utils/legacyNormalizeExpression';
-
 
 const execAsync = promisify(exec);
 
@@ -21,14 +20,15 @@ if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 if (!fs.existsSync(imageDir)) fs.mkdirSync(imageDir, { recursive: true });
 if (!fs.existsSync(videoDir)) fs.mkdirSync(videoDir, { recursive: true });
 
-export async function convertMedia(req, res) {
+export async function uploadMedia(req, res) {
     try {
+
         const file = req.file;
-        console.log('file nach Deklaration:', file);
+        const body = req.body;
+        console.log('body:', body);
 
         if (!file) return res.status(400).json({ error: 'Keine Datei hochgeladen' });
 
-        const nameWithoutExt = path.parse(file.originalname).name;
         const originalExt = path.extname(file.originalname).toLowerCase();
         const isImage = ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(originalExt);
         const isVideo = ['.mp4', '.avi', '.mov', '.mkv'].includes(originalExt);
@@ -41,12 +41,13 @@ export async function convertMedia(req, res) {
 
         const uniqueId = uuidv4();
         const uploadPaths = {};
-        const sizes = { sm: '300x300>', md: '800x800>', lg: '1920x1920>' };
+        const sizes = { sm: '300x', md: '800x', lg: '1920x' };
 
-        // ✅ BILDER: WebP in images/
+        // ✅ BILDER: WebP in images/ + Image-DB-Eintrag
         if (isImage) {
+
             for (const [suffix, size] of Object.entries(sizes)) {
-                const filename = `${uniqueId}_${nameWithoutExt}_${suffix}.webp`;
+                const filename = `${uniqueId}_${body.title}_${suffix}.webp`;
                 const outputPath = path.join(imageDir, filename);
                 const inputPath = file.path;
 
@@ -57,47 +58,86 @@ export async function convertMedia(req, res) {
                 console.log('✅ Bild erstellt:', fs.existsSync(outputPath));
                 uploadPaths[`sourceUrl${suffix.toUpperCase()}`] = `/media/images/${filename}`;
             }
+
+            // temporäre Upload-Datei löschen
+            fs.unlinkSync(file.path);
+
+            const newImage = await Image.create({
+                sourceUrlSM: uploadPaths.sourceUrlSM,
+                sourceUrlMD: uploadPaths.sourceUrlMD,
+                sourceUrlLG: uploadPaths.sourceUrlLG,
+                title: body.title,
+                description: body.description,
+                usage: null
+            });
+
+            console.log('Ordner-Inhalt:', {
+                images: fs.readdirSync(imageDir).slice(0, 5),
+                videos: fs.readdirSync(videoDir)
+            });
+
+            return res.json({
+                success: true,
+                type: 'image',
+                imageId: newImage.id,
+                files: Object.values(uploadPaths)
+            });
         }
-        // ✅ VIDEOS: Thumbnails (WebP) in images/
-        else if (isVideo) {
-            for (const [suffix, size] of Object.entries(sizes)) {
-                const filename = `${uniqueId}_${nameWithoutExt}_${suffix}.webp`;
-                const outputPath = path.join(imageDir, filename);  // ← Auch Thumbnails in images/
 
-                console.log(`Konvertiere Video-Thumbnail ${file.path}[0] → ${outputPath}`);
-                const cmd = `convert "${file.path}[0]" -resize "${size}" -quality 85 "${outputPath}"`;
-                await execAsync(cmd);
+        // ✅ VIDEOS: unverändert in videos/ + Video-DB-Eintrag
+        if (isVideo) {
+            const videoFilename = `${uniqueId}_${body.title}`;
+            const videoOutputPath = path.join(videoDir, videoFilename);
 
-                console.log('✅ Video-Thumbnail erstellt:', fs.existsSync(outputPath));
-                uploadPaths[`sourceUrl${suffix.toUpperCase()}`] = `/media/images/${filename}`;
-            }
+            console.log(`Kopiere Video ${file.path} → ${videoOutputPath}`);
+
+            await new Promise((resolve, reject) => {
+                const readStream = fs.createReadStream(file.path);
+                const writeStream = fs.createWriteStream(videoOutputPath);
+
+                readStream.on('error', reject);
+                writeStream.on('error', reject);
+                writeStream.on('close', resolve);
+
+                readStream.pipe(writeStream);
+            });
+
+            // Temp-Datei nach erfolgreichem Kopieren löschen
+            fs.unlinkSync(file.path);
+
+            const publicVideoUrl = `/media/videos/${videoFilename}`;
+
+            const newVideo = await Video.create({
+                sourceUrl: publicVideoUrl,
+                title: body.title,
+                description: body.description,
+                usage: null
+            });
+
+            console.log('Ordner-Inhalt:', {
+                images: fs.readdirSync(imageDir).slice(0, 5),
+                videos: fs.readdirSync(videoDir)
+            });
+
+            return res.json({
+                success: true,
+                type: 'video',
+                videoId: newVideo.id,
+                file: publicVideoUrl
+            });
         }
-
-        console.log('Ordner-Inhalt:', {
-            images: fs.readdirSync(imageDir).slice(0, 5),
-            videos: fs.readdirSync(videoDir)
-        });
-
-        const newMedia = await Image.create({
-            sourceUrlSM: uploadPaths.sourceUrlSM,
-            sourceUrlMD: uploadPaths.sourceUrlMD,
-            sourceUrlLG: uploadPaths.sourceUrlLG,
-            title: nameWithoutExt,
-            usage: null
-        });
-
-        fs.unlinkSync(file.path);
-        res.json({ success: true, mediaId: newMedia.id, files: Object.values(uploadPaths) });
-
     } catch (error) {
         console.error('Konvertierungsfehler:', error);
+        // Aufräumen, falls temporäre Datei noch existiert
+        if (req.file && fs.existsSync(req.file.path)) {
+            try { fs.unlinkSync(req.file.path); } catch { /* ignore */ }
+        }
         res.status(500).json({ error: 'Konvertierung fehlgeschlagen', details: error.message });
     }
 }
 
-
+// deine getAllImages-Funktion kann bleiben wie sie ist
 export async function getAllImages(req, res) {
-
     console.log(req.body);
 
     try {
@@ -106,10 +146,8 @@ export async function getAllImages(req, res) {
             success: true,
             data: allImages,
         });
-
     } catch (error) {
-        console.error('Failed to get all images', error); // Protokollieren der genauen Fehlermeldung
+        console.error('Failed to get all images', error);
         res.status(500).json({ message: 'Failed to get all images', error: error.message });
     }
-
 }
