@@ -1,1 +1,10 @@
 Bei Upload auf Server die package.json in Ordner 'api.hosting229701.ae8e2.netcup.net' (selbe Ebene wie httpdocs) verschieben.
+
+
+
+
+in package.json:
+
+"scripts": {
+    "start": "node httpdocs/src/index.js"
+  },
