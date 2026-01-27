@@ -2,12 +2,17 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+// Lade Umgebungsvariablen (engl. enviroment variables) aus der .env Datei
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// ✅ ABSOLUTER CONTAINER-PFAD zum Shared Volume
-const uploadDir = '/app/public/media';
+const uploadDir = path.join(
+  process.cwd(),
+  process.env.UPLOAD_DIR
+);
 
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });

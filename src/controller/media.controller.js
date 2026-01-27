@@ -6,15 +6,23 @@ import fs from 'fs';
 import Image from '../models/image.model.js';
 import Video from '../models/video.model.js'; // ← NEU: Video-Model importieren
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+// Lade Umgebungsvariablen (engl. enviroment variables) aus der .env Datei
+dotenv.config();
 
 const execAsync = promisify(exec);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const uploadDir = '/app/public/media';
+const uploadDir = path.join(
+  process.cwd(),
+  process.env.UPLOAD_DIR
+);
 
 const imageDir = path.join(uploadDir, 'images');
 const videoDir = path.join(uploadDir, 'videos');
+const documentDir = path.join(uploadDir, 'documents');
 
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 if (!fs.existsSync(imageDir)) fs.mkdirSync(imageDir, { recursive: true });
