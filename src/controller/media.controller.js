@@ -15,10 +15,9 @@ const execAsync = promisify(exec);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const uploadDir = path.join(
-  process.cwd(),
-  process.env.UPLOAD_DIR
-);
+
+const uploadDir = process.env.UPLOAD_DIR;
+
 
 const imageDir = path.join(uploadDir, 'images');
 const videoDir = path.join(uploadDir, 'videos');
@@ -27,6 +26,12 @@ const documentDir = path.join(uploadDir, 'documents');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 if (!fs.existsSync(imageDir)) fs.mkdirSync(imageDir, { recursive: true });
 if (!fs.existsSync(videoDir)) fs.mkdirSync(videoDir, { recursive: true });
+
+// Debug-Logs (entfernen nach Fix)
+console.log('📁 UPLOAD_DIR:', uploadDir);
+console.log('📁 process.cwd():', process.cwd());
+console.log('✅ uploadDir exists:', fs.existsSync(uploadDir));
+console.log('✅ imageDir exists:', fs.existsSync(imageDir));
 
 export async function uploadMedia(req, res) {
     try {
@@ -64,7 +69,9 @@ export async function uploadMedia(req, res) {
                 await execAsync(cmd);
 
                 console.log('✅ Bild erstellt:', fs.existsSync(outputPath));
-                uploadPaths[`sourceUrl${suffix.toUpperCase()}`] = `/media/images/${filename}`;
+                // uploadPaths[`sourceUrl${suffix.toUpperCase()}`] = `/media/images/${filename}`;
+                uploadPaths[`sourceUrl${suffix.toUpperCase()}`] = filename;
+
             }
 
             // temporäre Upload-Datei löschen
@@ -74,6 +81,7 @@ export async function uploadMedia(req, res) {
                 sourceUrlSM: uploadPaths.sourceUrlSM,
                 sourceUrlMD: uploadPaths.sourceUrlMD,
                 sourceUrlLG: uploadPaths.sourceUrlLG,
+
                 title: body.title,
                 description: body.description,
                 usage: null

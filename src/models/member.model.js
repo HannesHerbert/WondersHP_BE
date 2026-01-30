@@ -29,13 +29,13 @@ const Member = sequelize.define('Member', {
   image_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    unique: true,
+    unique: false,
   },
   image_position: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    unique: true,
-  }
+    unique: false,
+  },
+  
 });
-
 export default Member

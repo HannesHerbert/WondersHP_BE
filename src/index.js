@@ -27,8 +27,6 @@ app.use(cors({
 
 // --------------------- ROUTES -------------------------
 
-
-
 app.use('/admin', AdminRouter);
 
 app.use('/login', LoginRouter);
@@ -53,6 +51,7 @@ const start = async () => {
 };
 
 start();
+
 
 // ---------------------USER-TABELLE ERSTELLEN--------------------------
 
