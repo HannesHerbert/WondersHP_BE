@@ -5,6 +5,9 @@ import { createApiRouter, initBackend } from './app.js';
 
 const app = express();
 
+// Nur lokale Proxys vertrauen (Vite-Proxy, Reverse-Proxy auf demselben Server): req.ip ist dann die Besucher-IP
+app.set('trust proxy', 'loopback, linklocal, uniquelocal');
+
 // API
 app.use(config.apiPrefix || '/', createApiRouter());
 

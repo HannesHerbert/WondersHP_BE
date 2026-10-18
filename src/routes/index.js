@@ -3,7 +3,6 @@ import { sequelize } from '../models/index.js';
 import AdminRouter from './admin.routes.js';
 import AuthRouter from './auth.routes.js';
 import PublicRouter from './public.routes.js';
-import HCaptchaRouter from './hcaptcha.routes.js';
 
 const router = Router();
 
@@ -19,6 +18,5 @@ router.get('/health', async (req, res) => {
 router.use('/admin', AdminRouter);
 router.use('/login', AuthRouter);
 router.use('/public', PublicRouter);
-router.use('/hcaptcha', HCaptchaRouter);
 
 export default router;

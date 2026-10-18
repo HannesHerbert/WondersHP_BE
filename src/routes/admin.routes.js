@@ -7,6 +7,8 @@ import { createMember, updateMembers } from '../controllers/member.controller.js
 import { createEvent, updateEvent, deleteEvent } from '../controllers/event.controller.js';
 import { updateHeroArea } from '../controllers/heroArea.controller.js';
 import { updateBookingTeaser } from '../controllers/bookingTeaser.controller.js';
+import { getContactRequests, updateContactRequest, deleteContactRequest } from '../controllers/contact.controller.js';
+import { updateSocialLinks } from '../controllers/social.controller.js';
 import {
     uploadMedia,
     getAllImages,
@@ -48,5 +50,14 @@ router.delete('/delete-event', h(deleteEvent));
 // Startseite
 router.put('/update-hero-area', h(updateHeroArea));
 router.put('/update-booking-teaser', h(updateBookingTeaser));
+
+// Social-Media-Links im Header
+router.put('/social-links', h(updateSocialLinks));
+
+// Kontaktanfragen
+router.get('/contact-requests', h(getContactRequests));
+router.route('/contact-requests/:id')
+    .patch(h(updateContactRequest))
+    .delete(h(deleteContactRequest));
 
 export default router;

@@ -56,18 +56,46 @@ async function readableImage(inputPath) {
 }
 
 /**
- * Konvertiert ein Bild in mehrere WebP-Größen.
+ * Rechnet einen Ausschnitt in Prozent (wie im Upload-Dialog gewählt) in Pixel um.
+ * Maße gelten für das bereits nach EXIF gedrehte Bild – so wie der Browser es anzeigt.
+ */
+async function cropToPixels(source, crop) {
+    if (!crop) return null;
+    const { width, height, orientation } = await sharp(source).metadata();
+    const rotated = orientation >= 5 && orientation <= 8;
+    const [w, h] = rotated ? [height, width] : [width, height];
+
+    const left = Math.round((crop.x / 100) * w);
+    const top = Math.round((crop.y / 100) * h);
+    const region = {
+        left: Math.min(Math.max(left, 0), w - 1),
+        top: Math.min(Math.max(top, 0), h - 1),
+        width: Math.round((crop.width / 100) * w),
+        height: Math.round((crop.height / 100) * h),
+    };
+    region.width = Math.max(1, Math.min(region.width, w - region.left));
+    region.height = Math.max(1, Math.min(region.height, h - region.top));
+    return region;
+}
+
+/**
+ * Konvertiert ein Bild in mehrere WebP-Größen, optional vorher auf einen Ausschnitt zugeschnitten.
+ * @param {{x: number, y: number, width: number, height: number}} [options.crop] Ausschnitt in Prozent
  * @returns {Promise<{sourceUrlSM: string, sourceUrlMD: string, sourceUrlLG: string}>} Dateinamen je Größe
  */
-export async function processImage(inputPath, title) {
+export async function processImage(inputPath, title, { crop } = {}) {
     const baseName = buildBaseName(title);
     const { source, cleanup } = await readableImage(inputPath);
 
     try {
+        const region = await cropToPixels(source, crop);
         const entries = await Promise.all(
             Object.entries(media.imageSizes).map(async ([size, width]) => {
                 const filename = `${baseName}_${size}.webp`;
-                await sharp(source)
+                // rotate() vor extract(): erst nach EXIF ausrichten, dann zuschneiden
+                let pipeline = sharp(source).rotate();
+                if (region) pipeline = pipeline.extract(region);
+                await pipeline
                     .resize({ width, withoutEnlargement: true })
                     // Verkleinern macht weich – leicht nachschärfen
                     .sharpen({ sigma: 0.6 })

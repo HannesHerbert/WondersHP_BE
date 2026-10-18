@@ -53,8 +53,6 @@ const config = Object.freeze({
         adminProtected: env.ADMIN_AUTH === 'true',
     },
 
-    hcaptchaSecret: env.HCAPTCHA_SECRET,
-
     paths: {
         storage: storageDir,
         images: path.join(storageDir, 'images'),
