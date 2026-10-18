@@ -9,6 +9,7 @@ import { getContactToken, createContactRequest } from '../controllers/contact.co
 import { getSocialLinks } from '../controllers/social.controller.js';
 import { getPublicRepertoire } from '../controllers/song.controller.js';
 import { getHeaderContent, getMediaContent } from '../controllers/siteContent.controller.js';
+import { getFooterContent, getLegalPage } from '../controllers/footerContent.controller.js';
 
 const router = Router();
 
@@ -22,6 +23,8 @@ router.get('/social-links', h(getSocialLinks));
 router.get('/repertoire', h(getPublicRepertoire));
 router.get('/header', h(getHeaderContent));
 router.get('/media-content', h(getMediaContent));
+router.get('/footer', h(getFooterContent));
+router.get('/legal/:page', h(getLegalPage));
 
 // Kontaktformular: Token holen (Zeitfalle), dann absenden
 router.get('/contact/token', h(getContactToken));

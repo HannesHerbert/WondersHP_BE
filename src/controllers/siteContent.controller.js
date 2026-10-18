@@ -67,10 +67,11 @@ async function readMediaContent() {
 export async function getMediaContent(req, res) {
   const content = await readMediaContent();
 
-  const cover = content.coverImageId
-    ? await Image.findByPk(content.coverImageId)
-    : await Image.findOne({ where: { isPublic: true }, order: [['id', 'ASC']] });
-  const video = content.videoId ? await Video.findByPk(content.videoId) : await Video.findOne({ order: [['id', 'ASC']] });
+  // Gewähltes Cover/Video inzwischen gelöscht → wie "Automatisch" behandeln
+  const cover = (content.coverImageId && await Image.findByPk(content.coverImageId))
+    || await Image.findOne({ where: { isPublic: true }, order: [['id', 'ASC']] });
+  const video = (content.videoId && await Video.findByPk(content.videoId))
+    || await Video.findOne({ order: [['id', 'ASC']] });
 
   res.json({
     success: true,
@@ -79,7 +80,7 @@ export async function getMediaContent(req, res) {
       videoId: content.videoId,
       cover: cover ? { title: cover.title, images: toImageUrls(cover) } : null,
       tracks: content.tracks.map((track) => ({ ...track, url: `${config.mediaPrefix}/audio/${track.file}` })),
-      video: video ? { id: video.id, sourceUrl: video.sourceUrl, title: video.title, description: video.description } : null,
+      video: video ? Video.serialize(video) : null,
     },
   });
 }

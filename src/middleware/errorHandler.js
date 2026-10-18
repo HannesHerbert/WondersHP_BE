@@ -12,6 +12,9 @@ export function errorHandler(err, req, res, next) {
 
     if (err instanceof multer.MulterError) {
         status = err.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            message = `Die Datei ist zu groß (höchstens ${Math.round(config.media.maxUploadBytes / 1024 / 1024)} MB).`;
+        }
     } else if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
         status = 400;
         message = err.errors?.map((e) => e.message).join(', ') || message;

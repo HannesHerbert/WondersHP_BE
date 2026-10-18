@@ -1,7 +1,9 @@
+import path from 'path';
 import { Image, Video } from '../models/index.js';
 import config from '../config/index.js';
 import HttpError from '../utils/HttpError.js';
 import { toImageUrls } from '../utils/serializers.js';
+import { parseYouTubeId, canonicalUrl, fetchYouTubeInfo, storeYouTubePoster } from '../services/youtube.service.js';
 import {
   detectMediaType,
   processImage,
@@ -71,13 +73,60 @@ export async function getGalleryImages(req, res) {
   });
 }
 
-/** Öffentliche Videos (für Startseite und Galerie) */
+/** Öffentliche Videos für die Galerie: nur freigegebene */
 export async function getPublicVideos(req, res) {
-  const videos = await Video.findAll({ order: [['id', 'ASC']] });
-  res.json({
-    success: true,
-    data: videos.map(({ id, sourceUrl, title, description, usage }) => ({ id, sourceUrl, title, description, usage })),
+  const videos = await Video.findAll({ where: { isPublic: true }, order: [['id', 'ASC']] });
+  res.json({ success: true, data: videos.map(Video.serialize) });
+}
+
+export async function updateVideo(req, res) {
+  const video = await Video.findByPk(req.params.id);
+  if (!video) throw HttpError.notFound('Video nicht gefunden');
+  const { title, description, isPublic } = req.body;
+
+  await video.update({
+    title: title || video.title,
+    description: description ?? video.description,
+    ...(typeof isPublic === 'boolean' ? { isPublic } : {}),
   });
+  res.json({ success: true, data: video });
+}
+
+/** YouTube-Video per URL hinzufügen – Titel optional (sonst von YouTube), Vorschaubild wird lokal gespeichert */
+export async function addYouTubeVideo(req, res) {
+  const id = parseYouTubeId(req.body.url);
+  if (!id) throw HttpError.badRequest('Das ist keine gültige YouTube-Adresse.');
+
+  const sourceUrl = canonicalUrl(id);
+  if (await Video.findOne({ where: { sourceUrl } })) throw HttpError.badRequest('Dieses YouTube-Video ist schon in der Mediathek.');
+
+  const info = await fetchYouTubeInfo(id);
+  const title = String(req.body.title || '').trim() || info?.title || `YouTube-Video ${id}`;
+  const description = String(req.body.description || '').trim();
+  const posterFile = await storeYouTubePoster(id);
+
+  const video = await Video.create({
+    sourceUrl, title, description, provider: 'youtube', externalId: id, posterFile, isPublic: req.body.isPublic === true,
+  });
+  res.status(201).json({ success: true, data: Video.serialize(video) });
+}
+
+/** Video löschen; die Datei nur, wenn kein anderer Eintrag sie noch nutzt */
+export async function deleteVideo(req, res) {
+  const video = await Video.findByPk(req.params.id);
+  if (!video) throw HttpError.notFound('Video nicht gefunden');
+
+  await video.destroy();
+  if (video.posterFile) await removeFile(path.join(paths.images, video.posterFile));
+
+  // Lokale Datei nur löschen, wenn kein anderer Eintrag sie noch nutzt
+  if (video.provider !== 'youtube') {
+    const file = path.basename(video.sourceUrl.split('?')[0]);
+    const stillUsed = (await Video.findAll()).some((v) => path.basename(v.sourceUrl.split('?')[0]) === file);
+    if (!stillUsed) await removeFile(path.join(paths.videos, file));
+  }
+
+  res.json({ success: true, message: 'Video gelöscht' });
 }
 
 export async function getAllImages(req, res) {
@@ -87,7 +136,7 @@ export async function getAllImages(req, res) {
 
 export async function getAllVideos(req, res) {
   const videos = await Video.findAll({ order: [['createdAt', 'DESC']] });
-  res.json({ success: true, data: videos });
+  res.json({ success: true, data: videos.map(Video.serialize) });
 }
 
 export async function getAllAudioFiles(req, res) {

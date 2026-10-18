@@ -11,10 +11,14 @@ import { getContactRequests, updateContactRequest, deleteContactRequest } from '
 import { updateSocialLinks } from '../controllers/social.controller.js';
 import { getSongs, createSong, updateSong, deleteSong } from '../controllers/song.controller.js';
 import { updateHeaderContent, updateMediaContent } from '../controllers/siteContent.controller.js';
+import { getFooterAdmin, updateFooterContent } from '../controllers/footerContent.controller.js';
 import {
     uploadMedia,
     getAllImages,
     getAllVideos,
+    updateVideo,
+    deleteVideo,
+    addYouTubeVideo,
     getAllAudioFiles,
     getAllDocuments,
     updateImage,
@@ -38,6 +42,10 @@ router.put('/update-members', h(updateMembers));
 router.post('/upload-media', upload.single('file'), h(uploadMedia));
 router.get('/list-images', h(getAllImages));
 router.get('/list-videos', h(getAllVideos));
+router.post('/video-youtube', h(addYouTubeVideo));
+router.route('/video/:id')
+    .put(h(updateVideo))
+    .delete(h(deleteVideo));
 router.get('/list-audio', h(getAllAudioFiles));
 router.get('/list-documents', h(getAllDocuments));
 router.route('/image/:id')
@@ -64,6 +72,9 @@ router.route('/songs/:id')
 // Seiteninhalte (Dashboard → Content)
 router.put('/header', h(updateHeaderContent));
 router.put('/media-content', h(updateMediaContent));
+router.route('/footer')
+    .get(h(getFooterAdmin))
+    .put(h(updateFooterContent));
 
 // Social-Media-Links im Header
 router.put('/social-links', h(updateSocialLinks));

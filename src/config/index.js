@@ -63,7 +63,8 @@ const config = Object.freeze({
     },
 
     media: {
-        maxUploadBytes: 100 * 1024 * 1024,
+        // Upload-Grenze in MB (Videos!), per MAX_UPLOAD_MB änderbar
+        maxUploadBytes: Number(env.MAX_UPLOAD_MB || 500) * 1024 * 1024,
         imageSizes: { sm: 300, md: 800, lg: 1920 },
         imageQuality: 85,
         imageExtensions: ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif'],
