@@ -7,6 +7,7 @@
     "start": "NODE_ENV=production node src/index.js",
     "dev": "NODE_ENV=development nodemon --watch src src/index.js",
     "seed:events": "node seed-events.js",
+    "seed:repertoire": "NODE_ENV=${NODE_ENV:-development} node seed-repertoire.js",
     "create:admin": "NODE_ENV=${NODE_ENV:-development} node create-admin.js"
   },
   "keywords": [],
