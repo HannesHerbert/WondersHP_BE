@@ -54,6 +54,8 @@ const config = Object.freeze({
     },
 
     paths: {
+        // Gebautes Frontend (vite build); nur auf dem Server vorhanden, lokal läuft Vite separat
+        frontend: path.resolve(rootDir, env.FRONTEND_DIR || 'public'),
         storage: storageDir,
         images: path.join(storageDir, 'images'),
         videos: path.join(storageDir, 'videos'),

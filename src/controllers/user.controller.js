@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { User } from '../models/index.js';
 import config from '../config/index.js';
 import HttpError from '../utils/HttpError.js';
+import { isLoginBlocked, recordLoginFailure, resetLoginFailures } from '../services/loginGuard.service.js';
 
 const SALT_ROUNDS = 10;
 
@@ -11,12 +12,17 @@ const toPublicUser = (user) => ({ id: user.id, username: user.username, email: u
 export async function loginUser(req, res) {
   const { username, password } = req.body;
   if (!username || !password) throw HttpError.badRequest('Benutzername und Passwort erforderlich');
+  if (isLoginBlocked(req.ip)) throw new HttpError(429, 'Zu viele Fehlversuche. Bitte in 15 Minuten erneut versuchen.');
 
   const user = await User.scope('withPassword').findOne({ where: { username } });
   const isValid = user && await bcrypt.compare(password, user.password);
 
   // Gleiche Antwort für unbekannten User und falsches Passwort – verrät keine Benutzernamen
-  if (!isValid) throw HttpError.unauthorized('Ungültige Zugangsdaten');
+  if (!isValid) {
+    recordLoginFailure(req.ip);
+    throw HttpError.unauthorized('Ungültige Zugangsdaten');
+  }
+  resetLoginFailures(req.ip);
 
   if (!config.auth.jwtSecret) throw new HttpError(500, 'JWT_SECRET ist nicht konfiguriert');
 

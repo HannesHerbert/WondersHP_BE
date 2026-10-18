@@ -2,3 +2,5 @@ node_modules
 storage
 .env*
 !.env.example
+# Frontend-Build, wird beim Deploy erzeugt
+public
