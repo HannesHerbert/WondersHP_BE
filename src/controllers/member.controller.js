@@ -5,6 +5,11 @@ import { serializeMember, emptyToNull } from '../utils/serializers.js';
 
 const withImage = { include: [{ model: Image, as: 'image' }] };
 
+const clampNumber = (value, min, max, fallback) => {
+  const n = Number(value);
+  return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
+};
+
 /** Formulardaten → Model-Felder mit sinnvollen Defaults */
 function normalizeMember(data = {}) {
   return {
@@ -14,6 +19,9 @@ function normalizeMember(data = {}) {
     description: data.description || '',
     image_position: Number(data.image_position) || 1,
     image_id: emptyToNull(data.image_id),
+    image_focus_x: clampNumber(data.image_focus_x, -100, 200, 50),
+    image_focus_y: clampNumber(data.image_focus_y, -100, 200, 50),
+    image_zoom: clampNumber(data.image_zoom, 1, 4, 1),
     isGuest: false, // Special Guests gibt es nicht mehr – alle stehen gleichwertig im Grid
   };
 }

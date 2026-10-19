@@ -10,6 +10,10 @@ const Member = sequelize.define('Member', {
   image_id: { type: DataTypes.INTEGER, allowNull: true },
   // Position im Grid, im Uhrzeigersinn ab oben (1, 2, 3, …)
   image_position: { type: DataTypes.INTEGER, allowNull: false },
+  // Bildausschnitt im Grid: Bildpunkt (in % der Bildbox), der in die Boxmitte rückt, plus Zoom
+  image_focus_x: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 50 },
+  image_focus_y: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 50 },
+  image_zoom: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 1 },
   // Veraltet (früher Special Guests), bleibt nur als Spalte bestehen
   isGuest: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 });
