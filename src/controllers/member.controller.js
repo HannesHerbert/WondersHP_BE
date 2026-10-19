@@ -14,7 +14,7 @@ function normalizeMember(data = {}) {
     description: data.description || '',
     image_position: Number(data.image_position) || 1,
     image_id: emptyToNull(data.image_id),
-    isGuest: data.isGuest === true || data.isGuest === 'true',
+    isGuest: false, // Special Guests gibt es nicht mehr – alle stehen gleichwertig im Grid
   };
 }
 
@@ -22,7 +22,7 @@ function normalizeMember(data = {}) {
 const isPersistedId = (id) => id && !String(id).startsWith('temp_');
 
 export async function getAllMembers(req, res) {
-  const members = await Member.findAll({ ...withImage, order: [['isGuest', 'ASC'], ['image_position', 'ASC']] });
+  const members = await Member.findAll({ ...withImage, order: [['image_position', 'ASC'], ['id', 'ASC']] });
   res.json({ success: true, data: members.map(serializeMember) });
 }
 

@@ -8,8 +8,9 @@ const Member = sequelize.define('Member', {
   instrument: { type: DataTypes.TEXT, allowNull: false },
   description: { type: DataTypes.TEXT, allowNull: false },
   image_id: { type: DataTypes.INTEGER, allowNull: true },
+  // Position im Grid, im Uhrzeigersinn ab oben (1, 2, 3, …)
   image_position: { type: DataTypes.INTEGER, allowNull: false },
-  // Special Guests (programmabhängig) – image_position ist dann die Reihenfolge unter den Gästen
+  // Veraltet (früher Special Guests), bleibt nur als Spalte bestehen
   isGuest: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 });
 

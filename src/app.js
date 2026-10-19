@@ -6,6 +6,7 @@ import { requestLogger } from './middleware/requestLogger.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { ensureStorageDirs } from './services/storage.service.js';
 import { initDatabase } from './db/index.js';
+import { migrateMemberOrder } from './services/memberOrder.service.js';
 
 /**
  * Baut den kompletten API-Router (Middleware, Routen, Fehlerbehandlung).
@@ -37,5 +38,9 @@ export async function initBackend() {
         console.warn('[config] Admin-Routen sind UNGESCHÜTZT (ADMIN_AUTH != true).');
     }
 
-    return initDatabase();
+    const connected = await initDatabase();
+    if (connected) {
+        await migrateMemberOrder().catch((err) => console.error('[db] Umstellung Mitglieder-Reihenfolge fehlgeschlagen:', err.message));
+    }
+    return connected;
 }
