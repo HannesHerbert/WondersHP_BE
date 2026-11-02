@@ -1,19 +1,18 @@
-// Standardtexte für Datenschutz und Impressum, solange im Dashboard (Content → Footer) nichts gespeichert ist.
-// <mark> = Platzhalter, die vor dem Livegang ausgefüllt bzw. geprüft werden müssen.
+// Standardtexte für Datenschutz, Impressum und Veranstalter-Infos, solange im Dashboard (Content → Footer) nichts gespeichert ist.
 
 export const DEFAULT_DATENSCHUTZ = `<p>Wir freuen uns über deinen Besuch. Hier steht, welche Daten beim Besuch dieser Website anfallen, wofür wir sie nutzen und welche Rechte du hast. Wir setzen keine Analyse- oder Werbe-Tracker ein.</p>
 
 <h3>1. Verantwortlich</h3>
 <p>Jody Cooper &amp; the Wonders<br>
-<mark>Vor- und Nachname der verantwortlichen Person</mark><br>
-<mark>Straße und Hausnummer, PLZ Ort</mark><br>
+Ulrich Dobe<br>
+Feuerbachstr. 75, 06114 Halle (Saale)<br>
 E-Mail: <a href="mailto:ulrich.dobe@gmx.de">ulrich.dobe@gmx.de</a></p>
 
 <h3>2. Hosting und Server-Logfiles</h3>
-<p>Die Website liegt bei der netcup GmbH, Daimlerstraße 25, 76185 Karlsruhe <mark>Anbieter bitte prüfen</mark>. Beim Aufruf speichert der Server technisch notwendige Daten: IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, übertragene Datenmenge, Browser und Betriebssystem sowie die zuvor besuchte Seite (Referrer). Das ist nötig, um die Website sicher und stabil auszuliefern (Art. 6 Abs. 1 lit. f DSGVO). Die Logfiles werden nach <mark>Anzahl</mark> Tagen gelöscht. Mit dem Hoster besteht ein Vertrag zur Auftragsverarbeitung.</p>
+<p>Die Website liegt bei der netcup GmbH, Daimlerstraße 25, 76185 Karlsruhe. Beim Aufruf speichert der Server technisch notwendige Daten: IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, übertragene Datenmenge, Browser und Betriebssystem sowie die zuvor besuchte Seite (Referrer). Das ist nötig, um die Website sicher und stabil auszuliefern (Art. 6 Abs. 1 lit. f DSGVO). Die Logfiles werden vom Hoster regelmäßig automatisch gelöscht. Mit dem Hoster besteht ein Vertrag zur Auftragsverarbeitung.</p>
 
 <h3>3. Kontaktformular</h3>
-<p>Wenn du uns über das Formular schreibst, speichern wir deinen Namen, deine E-Mail-Adresse, deine Nachricht und den Zeitpunkt, um deine Anfrage zu beantworten (Art. 6 Abs. 1 lit. b DSGVO bei Buchungsanfragen, sonst lit. f). Die Daten liegen in unserer Datenbank bei Aiven (Aiven Oy, Helsinki, Finnland, Serverstandort <mark>Region bitte prüfen</mark>) und werden nicht an Dritte weitergegeben. Wir löschen sie, sobald die Anfrage erledigt ist und keine Aufbewahrungspflicht besteht.</p>
+<p>Wenn du uns über das Formular schreibst, speichern wir deinen Namen, deine E-Mail-Adresse, deine Nachricht und den Zeitpunkt, um deine Anfrage zu beantworten (Art. 6 Abs. 1 lit. b DSGVO bei Buchungsanfragen, sonst lit. f). Die Daten liegen in unserer Datenbank bei Aiven (Aiven Oy, Helsinki, Finnland, Serverstandort in der EU) und werden nicht an weitere Dritte weitergegeben. Damit wir keine Anfrage übersehen, geht uns zusätzlich eine Benachrichtigung mit diesen Angaben per E-Mail zu; das Postfach liegt bei GMX (1&amp;1 Mail &amp; Media GmbH, Montabaur). Wir löschen sie, sobald die Anfrage erledigt ist und keine Aufbewahrungspflicht besteht.</p>
 <p>Gegen Spam nutzen wir kein Captcha eines Drittanbieters, sondern eigene Prüfungen auf unserem Server: ein für Menschen unsichtbares Feld, eine Mindestzeit zum Ausfüllen und eine Begrenzung der Anfragen pro IP-Adresse. Die IP-Adresse wird dafür höchstens 10 Minuten im Arbeitsspeicher gehalten und nicht gespeichert (Art. 6 Abs. 1 lit. f DSGVO).</p>
 
 <h3>4. Cookies und lokale Speicherung</h3>
@@ -29,25 +28,31 @@ E-Mail: <a href="mailto:ulrich.dobe@gmx.de">ulrich.dobe@gmx.de</a></p>
 <p>Die Symbole für YouTube, Instagram und Facebook sind einfache Links. Es werden keine Plugins geladen; Daten fließen erst, wenn du einen Link anklickst und das jeweilige Netzwerk öffnest. Dort gelten dessen Datenschutzbestimmungen.</p>
 
 <h3>8. Deine Rechte</h3>
-<p>Du hast das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung deiner Daten, auf Datenübertragbarkeit sowie auf Widerspruch gegen Verarbeitungen nach Art. 6 Abs. 1 lit. f DSGVO. Eine Einwilligung kannst du jederzeit widerrufen. Schreib uns dafür einfach an die oben genannte E-Mail-Adresse. Außerdem kannst du dich bei einer Datenschutz-Aufsichtsbehörde beschweren, zum Beispiel bei <mark>zuständige Aufsichtsbehörde (Bundesland)</mark>.</p>
+<p>Du hast das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung deiner Daten, auf Datenübertragbarkeit sowie auf Widerspruch gegen Verarbeitungen nach Art. 6 Abs. 1 lit. f DSGVO. Eine Einwilligung kannst du jederzeit widerrufen. Schreib uns dafür einfach an die oben genannte E-Mail-Adresse. Außerdem kannst du dich bei einer Datenschutz-Aufsichtsbehörde beschweren, zum Beispiel bei dem Landesbeauftragten für den Datenschutz Sachsen-Anhalt.</p>
 
-<p>Stand: Oktober 2026</p>`;
+<p>Stand: November 2026</p>`;
 
 export const DEFAULT_IMPRESSUM = `<h3>Angaben gemäß § 5 DDG</h3>
 <p>Jody Cooper &amp; the Wonders<br>
-<mark>Vor- und Nachname</mark><br>
-<mark>Straße und Hausnummer</mark><br>
-<mark>PLZ Ort</mark></p>
+Ulrich Dobe<br>
+Feuerbachstr. 75<br>
+06114 Halle (Saale)</p>
 
 <h3>Kontakt</h3>
-<p>E-Mail: <a href="mailto:ulrich.dobe@gmx.de">ulrich.dobe@gmx.de</a><br>
-Telefon: <mark>Telefonnummer</mark></p>
+<p>E-Mail: <a href="mailto:ulrich.dobe@gmx.de">ulrich.dobe@gmx.de</a></p>
 
 <h3>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h3>
-<p><mark>Vor- und Nachname, Anschrift wie oben</mark></p>
+<p>Ulrich Dobe, Anschrift wie oben</p>
 
 <h3>Haftung für Links</h3>
-<p>Unsere Seite enthält Links zu externen Websites (z.B. YouTube, Instagram, Facebook). Auf deren Inhalte haben wir keinen Einfluss; dafür ist der jeweilige Anbieter verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entfernen wir solche Links umgehend.</p>
+<p>Unsere Seite enthält Links zu externen Websites (z.B. YouTube, Instagram, Facebook). Auf deren Inhalte haben wir keinen Einfluss; dafür ist der jeweilige Anbieter verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entfernen wir solche Links umgehend.</p>`;
 
-<h3>Bildnachweise</h3>
-<p><mark>Fotografinnen und Fotografen der Bandfotos</mark></p>`;
+export const DEFAULT_VERANSTALTER = `<p>Ihr plant ein Stadtfest, eine Firmenfeier, eine Hochzeit oder eine Party? Das bieten wir an:</p>
+<ul>
+<li><b>Auftritt:</b> 90 Minuten Konzert oder Tanz. Bühne, PA, Licht und Technik stellt dabei der Veranstalter.</li>
+<li><b>Verlängerung:</b> jede weitere Stunde auf Wunsch.</li>
+<li><b>Musikanlage:</b> PA bis 200 Personen samt Tontechnik können wir mitbringen.</li>
+<li><b>Licht:</b> Lichtanlage samt Lichttechnik können wir mitbringen.</li>
+<li><b>Ohne Infrastruktur vor Ort:</b> Bühne, PA, Licht und Technik durch uns, je nach Aufwand.</li>
+</ul>
+<p>Preise, Tech-Rider, GEMA-Liste und Pressematerial schicken wir euch nach eurer Anfrage. Schreibt uns dazu am besten gleich Datum, Ort und Anlass.</p>`;

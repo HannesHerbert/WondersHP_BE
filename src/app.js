@@ -7,6 +7,7 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { ensureStorageDirs } from './services/storage.service.js';
 import { initDatabase } from './db/index.js';
 import { migrateMemberOrder } from './services/memberOrder.service.js';
+import { isMailConfigured } from './services/mail.service.js';
 
 /**
  * Baut den kompletten API-Router (Middleware, Routen, Fehlerbehandlung).
@@ -36,6 +37,10 @@ export async function initBackend() {
     }
     if (!config.auth.adminProtected) {
         console.warn('[config] Admin-Routen sind UNGESCHÜTZT (ADMIN_AUTH != true).');
+    }
+
+    if (!isMailConfigured()) {
+        console.warn('[mail] SMTP_HOST/MAIL_TO fehlen – Kontaktanfragen landen nur im Dashboard, ohne E-Mail.');
     }
 
     const connected = await initDatabase();

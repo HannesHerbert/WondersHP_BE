@@ -46,6 +46,16 @@ const config = Object.freeze({
         },
     },
 
+    // Benachrichtigung bei Kontaktanfragen; ohne SMTP_HOST und MAIL_TO bleibt es beim Dashboard
+    mail: {
+        host: env.SMTP_HOST || '',
+        port: Number(env.SMTP_PORT || 587),
+        user: env.SMTP_USER || '',
+        pass: env.SMTP_PASS || '',
+        from: env.MAIL_FROM || env.SMTP_USER || '',
+        to: env.MAIL_TO || '',
+    },
+
     auth: {
         jwtSecret: env.JWT_SECRET,
         tokenTtl: env.JWT_TTL || '1h',

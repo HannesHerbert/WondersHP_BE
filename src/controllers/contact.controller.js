@@ -1,6 +1,7 @@
 import { ContactRequest } from '../models/index.js';
 import HttpError from '../utils/HttpError.js';
 import { issueFormToken, checkFormToken, isRateLimited, looksLikeSpam } from '../services/spamGuard.service.js';
+import { notifyContactRequest } from '../services/mail.service.js';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const LIMITS = { name: 120, email: 254, message: 5000 };
@@ -33,6 +34,8 @@ export async function createContactRequest(req, res) {
   if (looksLikeSpam(data.message)) return res.status(201).json({ success: true });
 
   await ContactRequest.create(data);
+  // Die Anfrage ist gespeichert; ein Mail-Problem darf den Absender nicht treffen
+  notifyContactRequest(data).catch((error) => console.error('[mail] Benachrichtigung fehlgeschlagen:', error.message));
   res.status(201).json({ success: true });
 }
 

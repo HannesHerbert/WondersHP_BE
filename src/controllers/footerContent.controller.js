@@ -1,13 +1,14 @@
 import { Setting } from '../models/index.js';
 import HttpError from '../utils/HttpError.js';
-import { DEFAULT_DATENSCHUTZ, DEFAULT_IMPRESSUM } from '../content/legalDefaults.js';
+import { DEFAULT_DATENSCHUTZ, DEFAULT_IMPRESSUM, DEFAULT_VERANSTALTER } from '../content/legalDefaults.js';
 
-// Content → Footer: Kontaktangaben im Footer und die Texte für Datenschutz und Impressum
+// Content → Footer: Kontaktangaben im Footer und die Texte für Datenschutz, Impressum und Veranstalter
 const KEYS = {
   email: 'footer.email',
   phone: 'footer.phone',
   datenschutz: 'legal.datenschutz',
   impressum: 'legal.impressum',
+  veranstalter: 'content.veranstalter',
 };
 
 // Startwerte = bisheriger Footer; null in der DB heißt "nie gespeichert", '' heißt "bewusst leer"
@@ -16,6 +17,7 @@ const DEFAULTS = {
   phone: '0174 – 12 34 567',
   datenschutz: DEFAULT_DATENSCHUTZ,
   impressum: DEFAULT_IMPRESSUM,
+  veranstalter: DEFAULT_VERANSTALTER,
 };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -36,7 +38,7 @@ export async function getFooterContent(req, res) {
 
 export async function getLegalPage(req, res) {
   const page = req.params.page;
-  if (!['datenschutz', 'impressum'].includes(page)) throw HttpError.notFound('Seite nicht gefunden');
+  if (!['datenschutz', 'impressum', 'veranstalter'].includes(page)) throw HttpError.notFound('Seite nicht gefunden');
   const content = (await readAll())[page];
   res.json({ success: true, data: { page, content } });
 }
@@ -51,12 +53,13 @@ export async function updateFooterContent(req, res) {
   const phone = String(req.body.phone ?? '').trim();
   const datenschutz = String(req.body.datenschutz ?? '');
   const impressum = String(req.body.impressum ?? '');
+  const veranstalter = String(req.body.veranstalter ?? '');
 
   if (email && !EMAIL_PATTERN.test(email)) throw HttpError.badRequest('Bitte eine gültige E-Mail-Adresse angeben (oder leer lassen).');
   if (phone && !/\d{4,}/.test(phone.replace(/\D/g, ''))) throw HttpError.badRequest('Die Telefonnummer enthält zu wenige Ziffern.');
-  if (datenschutz.length > MAX_TEXT || impressum.length > MAX_TEXT) throw HttpError.badRequest('Ein Text ist zu lang.');
+  if (datenschutz.length > MAX_TEXT || impressum.length > MAX_TEXT || veranstalter.length > MAX_TEXT) throw HttpError.badRequest('Ein Text ist zu lang.');
 
-  const values = { email, phone, datenschutz, impressum };
+  const values = { email, phone, datenschutz, impressum, veranstalter };
   await Promise.all(Object.entries(KEYS).map(([field, key]) => Setting.upsert({ key, value: values[field] })));
   return getFooterAdmin(req, res);
 }
