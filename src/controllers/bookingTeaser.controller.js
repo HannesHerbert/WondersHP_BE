@@ -11,6 +11,11 @@ const clampPercent = (value, fallback) => {
   return Number.isFinite(number) ? Math.min(Math.max(number, 0), 100) : fallback;
 };
 
+const clampZoom = (value, fallback) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.min(Math.max(number, 1), 30) : fallback;
+};
+
 /** Es gibt genau einen Teaser-Eintrag – wird bei Bedarf mit Standardwerten angelegt. */
 async function getOrCreateBookingTeaser() {
   const teaser = await BookingTeaser.findOne(withImage);
@@ -53,7 +58,7 @@ export async function getBookingTeaser(req, res) {
 }
 
 export async function updateBookingTeaser(req, res) {
-  const { title, image_id, focusX, focusY } = req.body;
+  const { title, image_id, focusX, focusY, maxZoom } = req.body;
   const teaser = await getOrCreateBookingTeaser();
 
   await teaser.update({
@@ -61,6 +66,7 @@ export async function updateBookingTeaser(req, res) {
     image_id: emptyToNull(image_id),
     focusX: clampPercent(focusX, teaser.focusX),
     focusY: clampPercent(focusY, teaser.focusY),
+    maxZoom: clampZoom(maxZoom, teaser.maxZoom),
   });
   await teaser.reload(withImage);
   await refreshFocusDetail(teaser);

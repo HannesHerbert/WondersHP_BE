@@ -9,6 +9,8 @@ const BookingTeaser = sequelize.define('BookingTeaser', {
   // Zoompunkt in Prozent der Bildbreite/-höhe
   focusX: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 50 },
   focusY: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 50 },
+  // Endvergrößerung des Zooms (1 = kein Zoom)
+  maxZoom: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 2.6 },
   // Hochskalierte, geschärfte Detail-Ebenen um den Zoompunkt (JSON: [{file, x, y, w, h, from, to}], Lage in %)
   detailLayers: { type: DataTypes.TEXT, allowNull: true },
 });
@@ -18,6 +20,7 @@ BookingTeaser.DEFAULTS = {
   image_id: null,
   focusX: 50,
   focusY: 50,
+  maxZoom: 2.6,
 };
 
 export default BookingTeaser;

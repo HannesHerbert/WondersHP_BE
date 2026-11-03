@@ -40,6 +40,7 @@ export function serializeBookingTeaser(teaser) {
         image_id: teaser.image_id,
         focusX: teaser.focusX,
         focusY: teaser.focusY,
+        maxZoom: teaser.maxZoom,
         images: toImageUrls(teaser.image),
         details: parseJsonArray(teaser.detailLayers),
     };
